@@ -31,7 +31,8 @@ struct MovieNode {
 struct Actor {
     int id;
     char * name;
-    MovieNode * movies;  
+    MovieNode * movies;
+    char ** movies_ids;
 };
 
 struct Movie {
@@ -121,35 +122,96 @@ int clear_id(char * data, int size) {
     return atoi(id);
 }
 
-int get_movie(Movie ** movie, FILE ** movie_file_ptr, char separator, Column * col, int cur_idx) {
+void * movie_case (char* data, int size, Column* col, Movie** movie) {
+    if (col->index == 0) {
+        (*movie)->id = clear_id(data, size);
+    } else {
+        (*movie)->title = data;
+    }
+}
+
+char ** split_movies_ids(char * data, int size, char separator) {
+    int start_idx = 0, i = 0, qty = 0, id_size, list_size = 5;
+    char ** result = malloc(sizeof(char*)*5);
+    while (i < size) {
+        while (data[i] != separator && i < size) {
+            i++;
+        }
+        qty += 1;
+        id_size = (i - start_idx);
+        
+        if (qty > list_size) {
+            list_size += 5;
+            result = realloc(result, list_size);
+        }
+        
+        result[qty] = malloc(sizeof(char)*id_size);
+        strncpy(result[qty], data + start_idx, id_size);
+        
+        i += 1;
+        start_idx = i;
+    }
+    
+    if (qty != list_size) {
+        result = realloc(result, qty);
+    }
+    
+    return result;
+}
+
+void * actor_case (char* data, int size, Column* col, Actor** actor) {
+    if (col->index == 0) {
+        (*actor)->id = clear_id(data, size);
+    } else if (strcmp(col->name, "primaryName")) {
+        (*actor)->name = data;
+    } else {
+        (*actor)->movies_ids = split_movies_ids(data, size, ',');
+    }
+}
+
+int get_row(
+    Actor ** actor,
+    Movie ** movie,
+    void * (*movie_case)(char* data, int size, Column* col, Movie** movie),
+    void * (*actor_case)(char* data, int size, Column* col, Actor** actor),
+    FILE ** fileptr,
+    char separator,
+    Column * col,
+    int cur_idx
+)
+{
+    if (actor && movie) {
+        printf("Must get_row only for actor, or only for movie\n");
+        return;
+    }
+    
     char sep_line = '\n';
-    char c = fgetc((*movie_file_ptr));
+    char c = fgetc((*fileptr));
     int i = 0, j = 0, index = 0;
     int search_index = 0;
     
-    fseek((*movie_file_ptr), cur_idx, SEEK_SET);
+    fseek((*fileptr), cur_idx, SEEK_SET);
     while (c != sep_line) {
         while (c == separator) {
-            c = fgetc((*movie_file_ptr));
+            c = fgetc((*fileptr));
             search_index += 1;
         }
         
         while (c != separator && c != sep_line) {
-            c = fgetc((*movie_file_ptr));
+            c = fgetc((*fileptr));
             j++;
             search_index += 1;
         }
         
         if (index == col->index) {
             char * data = malloc(sizeof(char)*j);
-            fseek((*movie_file_ptr), cur_idx + i, SEEK_SET);
-            fgets(data, j, (*movie_file_ptr));
-            // printf("%s\n", data);
+            fseek((*fileptr), cur_idx + i, SEEK_SET);
+            fgets(data, j, (*fileptr));
             
-            if (strcmp(col->name, "tconst") == 0) {
-                (*movie)->id = clear_id(data, j + 1);
+            if (movie) {
+                movie_case(data, j + 1, col, movie);
             } else {
-                (*movie)->title = data;
+                actor_case(data, j + 1, col, actor);
             }
             
             if (!col->next) {
@@ -166,7 +228,7 @@ int get_movie(Movie ** movie, FILE ** movie_file_ptr, char separator, Column * c
     }
     
     while (c != sep_line) {
-        c = fgetc((*movie_file_ptr));
+        c = fgetc((*fileptr));
         search_index += 1;
     }
     
@@ -186,7 +248,16 @@ void fuel_movie_list(FILE ** movie_file_ptr, char separator, Movie *** m_list, i
         (*m_list)[i]->neighbors = NULL;
         (*m_list)[i]->list_index = i;
         
-        cur_idx = get_movie(&((*m_list)[i]), movie_file_ptr, separator, movie_cols, cur_idx);
+        cur_idx = get_row(
+            NULL, // Actor
+            &((*m_list)[i]), // Movie
+            movie_case, // Movie function,
+            NULL, // Actor function
+            movie_file_ptr,
+            separator,
+            movie_cols,
+            cur_idx
+        );
         // printf("\n\n");
     }
 }
@@ -199,21 +270,63 @@ Movie ** init_movie_list(FILE * movie_file_ptr, int init_size, char separator) {
     return m_list;
 }
 
-// Column ** get_artists_cols(FILE ** fileptr, char separator) {
-//     int size = 3;
-//     char **artists_cols_to_search = malloc(sizeof(char*)*size);
+int get_actor_cols(FILE ** fileptr, char separator, Column ** actors_cols_to_search) {
+    (*actors_cols_to_search)->name = malloc(sizeof(char)*6);
+    strcpy((*actors_cols_to_search)->name, "nconst");
+    (*actors_cols_to_search)->index = __INT32_MAX__;
     
-//     artists_cols_to_search[0] = malloc(sizeof(char)*6);
-//     strcpy(artists_cols_to_search[0], "nconst");
+    (*actors_cols_to_search)->next = malloc(sizeof(Column));
     
-//     artists_cols_to_search[1] = malloc(sizeof(char)*11);
-//     strcpy(artists_cols_to_search[1], "primaryName");
+    Column * actor_col = (*actors_cols_to_search)->next;
+    actor_col->name = malloc(sizeof(char)*11);
+    strcpy(actor_col->name, "primaryName");
+    actor_col->index = __INT32_MAX__;
+    actor_col->next = malloc(sizeof(Column));
     
-//     artists_cols_to_search[2] = malloc(sizeof(char)*14);
-//     strcpy(artists_cols_to_search[2], "knownForTitles");
+    actor_col = actor_col->next;
+    actor_col->name = malloc(sizeof(char)*14);
+    strcpy(actor_col->name, "knownForTitles");
+    actor_col->index = __INT32_MAX__;
+    actor_col->next = NULL;
     
-//     return get_cols(fileptr, separator, artists_cols_to_search, size);
-// }
+    int cur_idx = get_col(fileptr, separator, actors_cols_to_search);
+    return cur_idx;
+}
+
+void fuel_actor_list(FILE ** actor_fileptr, char separator, Actor *** a_list, int size) {
+    Column * actor_cols = malloc(sizeof(Column));
+    int cur_idx = get_actor_cols(actor_fileptr, separator, &actor_cols);
+    
+    printf("%d\n\n", actor_cols->index);
+    
+    for (int i = 0; i < size; i++) {
+        (*a_list)[i] = malloc(sizeof(Movie));
+        (*a_list)[i]->id = __INT32_MAX__;
+        (*a_list)[i]->movies = NULL;
+        (*a_list)[i]->movies_ids = NULL;
+        (*a_list)[i]->name = NULL;
+        
+        cur_idx = get_row(
+            &((*a_list)[i]), // Actor
+            NULL, // Movie
+            NULL, // Movie function,
+            &actor_case, // Actor function
+            actor_fileptr,
+            separator,
+            actor_cols,
+            cur_idx
+        );
+        // printf("\n\n");
+    }
+}
+
+Actor ** init_actor_list(FILE * actor_fileptr, int init_size, char separator) {
+    Actor ** a_list = malloc(sizeof(Actor*)*init_size);
+    
+    fuel_actor_list(&actor_fileptr, separator, &a_list, init_size);
+    
+    return a_list;
+}
 
 int main() {
     FILE *actors_fileptr;
@@ -232,7 +345,7 @@ int main() {
     Actor ** actor_list = init_actor_list(actors_fileptr, 100, separator);
     
     for (int i = 0; i < 100; i++) {
-        printf("%d -> %s\n", movies_list[i]->id, movies_list[i]->title);
+        printf("%d -> %s\n", actor_list[i]->id, actor_list[i]->name);
     }
     return 0;
 }
