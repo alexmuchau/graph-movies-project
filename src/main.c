@@ -6,7 +6,7 @@ int main() {
     FILE *actors_fileptr;
     FILE *movies_fileptr;
     char separator = '\t';
-    int size = 10000;
+    int size = 100;
     
     actors_fileptr = fopen("././data/name.basics.tsv", "r");
     movies_fileptr = fopen("././data/title.basics.tsv", "r");
@@ -24,13 +24,13 @@ int main() {
     Movie ** movies_list = init_movie_list(movies_fileptr, size, separator);
     Actor ** actor_list = init_actor_list(actors_fileptr, size, separator);
     
-    for (int i = 0; i < size; i++) {
-        printf("%d -> %s -> ", movies_list[i]->id, movies_list[i]->title);
-        // printf("%ld", sizeof(actor_list[i]->movies_ids)/sizeof(int));
+    // for (int i = 0; i < size; i++) {
+    //     printf("%d -> %s -> ", actor_list[i]->id, actor_list[i]->name);
+    //     printf("%ld - ", sizeof(actor_list[i]->movies_ids)/sizeof(int));
         // for (int j = 0; j < sizeof(actor_list[i]->movies_ids)/sizeof(int); j++) {
         //     printf("%d, ", actor_list[i]->movies_ids[j]);
         // }
-        printf("\n");
-    }
+    //     printf("\n");
+    // }
     return 0;
 }

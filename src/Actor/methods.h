@@ -4,7 +4,7 @@
 #include "../Column/methods.h"
 #include "Actor.h"
 
-int * split_movies_ids(char * data, int size, char separator);
+void split_movies_ids(char * data, int size, char separator, Actor** actor);
 
 void * actor_case (char* data, int size, Column* col, Actor** actor);
 

@@ -3,39 +3,41 @@
 
 #include "methods.h"
 
-int * split_movies_ids(char * data, int size, char separator) {
-    int start_idx = 0, i = 0, qty = 0, id_size, list_size = 5;
-    int * result = malloc(sizeof(int)*5);
-    // printf("%s\n", data);
+void split_movies_ids(char * data, int size, char separator, Actor** actor) {
+    int start_idx = 0, i = 0, id_size, list_size = 5;
+    (*actor)->movies_ids = malloc(sizeof(int)*5);
+    printf("%s\n", data);
     while (i < size) {
         while (data[i] != separator && i < size) {
             i++;
         }
         id_size = (i - start_idx);
         
-        if (qty > list_size) {
+        if ((*actor)->size_movies_ids > list_size) {
             list_size += 5;
-            result = realloc(result, sizeof(int)*list_size);
+            (*actor)->movies_ids = realloc((*actor)->movies_ids, sizeof(int)*list_size);
         }
         
         char * id = malloc(sizeof(char)*id_size);
         strncpy(id, data + start_idx, id_size);
-        result[qty] = clear_id(id, id_size);
+        (*actor)->movies_ids[(*actor)->size_movies_ids] = clear_id(id, id_size);
         // printf("%s -> %d,", id, result[qty]);
         
-        qty += 1;
+        (*actor)->size_movies_ids += 1;
         i += 1;
         start_idx = i;
     }
-    // printf("\n");
     
-    if (qty != list_size) {
-        result = realloc(result, sizeof(int)*qty);
+    if ((*actor)->size_movies_ids != list_size) {
+        (*actor)->movies_ids = realloc((*actor)->movies_ids, sizeof(int)*(*actor)->size_movies_ids);
     }
     
-    return result;
+    for (int i = 0; i < (*actor)->size_movies_ids; i++) {
+        printf("%d, ", (*actor)->movies_ids[i]);
+    }
+    
+    printf("\n");
 }
-
 
 void * actor_case (char* data, int size, Column* col, Actor** actor) {
     if (col->index == 0) {
@@ -46,7 +48,12 @@ void * actor_case (char* data, int size, Column* col, Actor** actor) {
         (*actor)->name = data;
     } else if (strcmp(col->name, "knownForTitles") == 0) {
         // printf("movies_ids -> %s\n", data);
-        (*actor)->movies_ids = split_movies_ids(data, size, ',');
+        split_movies_ids(data, size, ',', actor);
+        for (int j = 0; j < (*actor)->size_movies_ids; j++) {
+            printf("%d, ", (*actor)->movies_ids[j]);
+        }
+        printf("\n\n");
+        
     } else {
         printf("Erro na comparacao -> %s -> %s\n", col->name,data);
     }
@@ -79,14 +86,14 @@ void fuel_actor_list(FILE ** actor_fileptr, char separator, Actor *** a_list, in
     Column * actor_cols = malloc(sizeof(Column));
     int cur_idx = get_actor_cols(actor_fileptr, separator, &actor_cols);
     
-    print_cols(actor_cols);
-    
     for (int i = 0; i < size; i++) {
         (*a_list)[i] = malloc(sizeof(Actor));
         (*a_list)[i]->id = __INT32_MAX__;
+        (*a_list)[i]->name = NULL;
         (*a_list)[i]->movies = NULL;
         (*a_list)[i]->movies_ids = NULL;
-        (*a_list)[i]->name = NULL;
+        (*a_list)[i]->size_movies_ids = 0;
+        
         
         cur_idx = get_row(
             &((*a_list)[i]), // Actor

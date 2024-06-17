@@ -9,6 +9,7 @@ struct Actor {
     char * name;
     MovieNode * movies;
     int * movies_ids;
+    int size_movies_ids;
 };
 
 #endif

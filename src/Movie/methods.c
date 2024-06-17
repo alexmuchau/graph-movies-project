@@ -32,8 +32,6 @@ void fuel_movie_list(FILE ** movie_file_ptr, char separator, Movie *** m_list, i
     Column * movie_cols = malloc(sizeof(Column));
     int cur_idx = get_movies_cols(movie_file_ptr, separator, &movie_cols);
     
-    printf("%d\n\n", movie_cols->index);
-    
     for (int i = 0; i < size; i++) {
         (*m_list)[i] = malloc(sizeof(Movie));
         (*m_list)[i]->id = __INT32_MAX__;
