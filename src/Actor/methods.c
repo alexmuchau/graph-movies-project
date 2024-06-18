@@ -48,7 +48,11 @@ void * actor_case (char* data, int size, Column* col, Actor** actor) {
         (*actor)->name = data;
     } else if (strcmp(col->name, "knownForTitles") == 0) {
         // printf("movies_ids -> %s\n", data);
-        split_movies_ids(data, size, ',', actor);
+        if (strlen(data) < 5) {
+            (*actor)->movies_ids = NULL;
+        } else {
+            split_movies_ids(data, size, ',', actor);
+        }
         // for (int j = 0; j < (*actor)->size_movies_ids; j++) {
         //     printf("%d, ", (*actor)->movies_ids[j]);
         // }

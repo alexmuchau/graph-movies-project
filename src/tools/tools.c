@@ -45,7 +45,7 @@ int get_row(
             char * data = malloc(sizeof(char)*j);
             fseek((*fileptr), cur_idx + i, SEEK_SET);
             fgets(data, j, (*fileptr));
-            printf("found %s -> %s.\n", col->name, data);
+            // printf("found %s -> %s.\n", col->name, data);
             
             if (movie) {
                 movie_case(data, j + 1, col, movie);

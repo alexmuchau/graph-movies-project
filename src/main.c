@@ -35,7 +35,7 @@ int main() {
     FILE *actors_fileptr;
     FILE *movies_fileptr;
     char separator = '\t';
-    int size = 10000;
+    int size = 100000;
     
     actors_fileptr = fopen("././data/name.basics.tsv", "r");
     movies_fileptr = fopen("././data/title.basics.tsv", "r");
@@ -51,57 +51,39 @@ int main() {
     }
     
     Node * movies_tree = init_movie_tree(movies_fileptr, size, separator);
-    printf("\n\n");
     Actor ** actor_list = init_actor_list(actors_fileptr, size, separator);
-    
-    // ride_in_tree(movies_tree);
-    
-    // printf("right -> %d", movies_tree->right->right->level);
-    print_max_right(movies_tree);
-    // printf("%d---\n", movies_tree->level);
-    // Movie * m = search_movie(movies_tree, 9999);
-    // if (m) {
-    //     printf("%d, %s\n", m->id, m->title);
-    // } else {
-    //     printf("Dont found\n");
-    // }
         
-    // connect_and_create_adjacencies(&actor_list, size, &movies_tree);
+    connect_and_create_adjacencies(&actor_list, size, &movies_tree);
     
-    // for (int i = 0; i < size; i++) {
-    //     printf("%d -> %s -> ", actor_list[i]->id, actor_list[i]->name);
-    //     printf("%ld - ", sizeof(actor_list[i]->movies_ids)/sizeof(int));
-        // for (int j = 0; j < sizeof(actor_list[i]->movies_ids)/sizeof(int); j++) {
-        //     printf("%d, ", actor_list[i]->movies_ids[j]);
-        // }
-    //     printf("\n");
-    // }
-    // int i = 0;
-    // while (1==1) {
-    //     while (i < size - 1 && !actor_list[i]->movies) {
-    //         i++;
-    //     }
-    //     if (actor_list[i]->movies) {
-    //         if (actor_list[i]->movies->movie->neighbors) {
-    //             printf("%d, Actor -> %s\n", i, actor_list[i+1]->name);
-    //             printf("Actor Movies -> ");
-    //             print_actor_movies(actor_list[i+1]->movies);
-    //             print_movies_ids(actor_list[i+1]);
-    //             printf("\n");
-    //             // printf(
-    //             //     "%d, %s -> %s -> %s\n",
-    //             //     i,
-    //             //     actor_list[i]->name,
-    //             //     actor_list[i]->movies->movie->neighbors->from->title,
-    //             //     actor_list[i]->movies->movie->neighbors->to->title
-    //             // );
+    int i = 0;
+    while (1==1) {
+        while (i < size - 1 && !actor_list[i]->movies) {
+            // printf("%d\n", i);
+            i++;
+        }
+        if (actor_list[i]->movies) {
+            if (actor_list[i]->movies->movie->neighbors) {
+                printf("%d, Actor -> %s\n", i, actor_list[i]->name);
+                printf("Actor Movies -> ");
+                print_actor_movies(actor_list[i]->movies);
+                // print_movies_ids(actor_list[i]);
+                printf("\n");
+                printf(
+                    "%d, %s -> %s -> %s\n",
+                    i,
+                    actor_list[i]->name,
+                    actor_list[i]->movies->movie->neighbors->from->title,
+                    actor_list[i]->movies->movie->neighbors->to->title
+                );
                 
-    //             break;
-    //         }
-    //     }
-    //     else {
-    //         break;
-    //     }
-    // }
+                break;
+            }
+            i++;
+        }
+        else {
+            break;
+        }
+    }
+    
     return 0;
 }

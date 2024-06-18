@@ -18,23 +18,18 @@ Adjacency* adj_insert(Adjacency** adj, Movie * from, Movie * to) {
     return (*adj);
 }
 
-MovieNode * connect_movie_id(Node * movie_tree, int * movie_ids, int size, int to_print) {
+MovieNode * connect_movie_id(Node * movie_tree, int * movie_ids, int size) {
+    if (!movie_ids) return NULL;
+    
     MovieNode * m_node;
     for (int m_idx = 0; m_idx < size; m_idx++) {
         Movie * movie = search_movie(movie_tree, movie_ids[m_idx]);
         
-        if (to_print == 0) {
-            printf("Trying to find %d\n", movie_ids[m_idx]);    
-        }
-        
         if (movie) {
-            if (to_print == 0) {
-                printf("Found movie '%s' with id:%d\n", movie->title, movie->id);
-            }
             m_node = malloc(sizeof(MovieNode));
             m_node->movie = movie;
             if (m_idx + 1 < size) {
-                m_node->next = connect_movie_id(movie_tree, movie_ids + m_idx + 1, size - (m_idx + 1), to_print);
+                m_node->next = connect_movie_id(movie_tree, movie_ids + m_idx + 1, size - (m_idx + 1));
             } else {
                 m_node->next = NULL;
             }
@@ -47,20 +42,17 @@ MovieNode * connect_movie_id(Node * movie_tree, int * movie_ids, int size, int t
 
 void connect_and_create_adjacencies(Actor *** a_list, int size, Node ** movie_tree)
 {
-    int m_idx;
-    int i;
+    int m_idx, i;
     MovieNode ** movie_node;
     for (i =0; i < size; i++) {
-        int to_print = strcmp((*a_list)[i]->name, "Robert Ellis");
-        if (to_print == 0) {
-            printf("--------------------%d- %s\n", (*a_list)[i]->id, (*a_list)[i]->name);
-        }
+        // In cases that knownForTitles == \N
+        if (!(*a_list)[i]->movies_ids) continue;
+        
         // Connecting movies_ids with movie_tree
         (*a_list)[i]->movies = connect_movie_id(
             (*movie_tree),
             (*a_list)[i]->movies_ids,
-            (*a_list)[i]->size_movies_ids,
-            to_print
+            (*a_list)[i]->size_movies_ids
         );
         
         // Adding adjacencies
