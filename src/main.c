@@ -21,7 +21,7 @@ int main() {
         return -1;
     }
     
-    Movie ** movies_list = init_movie_list(movies_fileptr, size, separator);
+    Node * movies_tree = init_movie_tree(movies_fileptr, size, separator);
     Actor ** actor_list = init_actor_list(actors_fileptr, size, separator);
     
     // for (int i = 0; i < size; i++) {
@@ -32,5 +32,6 @@ int main() {
         // }
     //     printf("\n");
     // }
+    printf("%s -> %d", movies_tree->movie->title, movies_tree->movie->id);
     return 0;
 }

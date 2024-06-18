@@ -6,8 +6,6 @@
 struct Movie;
 typedef struct Movie Movie;
 
-struct Adjacency;
-
 struct Movie {
     int id;
     char * title;

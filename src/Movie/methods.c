@@ -28,20 +28,20 @@ void * movie_case (char* data, int size, Column* col, Movie** movie) {
     }
 }
 
-void fuel_movie_list(FILE ** movie_file_ptr, char separator, Movie *** m_list, int size) {
+void fuel_movie_tree(FILE ** movie_file_ptr, char separator, Node ** tree_head, int size) {
     Column * movie_cols = malloc(sizeof(Column));
     int cur_idx = get_movies_cols(movie_file_ptr, separator, &movie_cols);
     
     for (int i = 0; i < size; i++) {
-        (*m_list)[i] = malloc(sizeof(Movie));
-        (*m_list)[i]->id = __INT32_MAX__;
-        (*m_list)[i]->title = NULL;
-        (*m_list)[i]->neighbors = NULL;
-        (*m_list)[i]->list_index = i;
+        Movie * movie = malloc(sizeof(Movie));
+        movie->id = __INT32_MAX__;
+        movie->title = NULL;
+        movie->neighbors = NULL;
+        movie->list_index = i;
         
         cur_idx = get_row(
             NULL, // Actor
-            &((*m_list)[i]), // Movie
+            &(movie), // Movie
             movie_case, // Movie function,
             NULL, // Actor function
             movie_file_ptr,
@@ -49,16 +49,18 @@ void fuel_movie_list(FILE ** movie_file_ptr, char separator, Movie *** m_list, i
             movie_cols,
             cur_idx
         );
+        
+        insert(tree_head, movie);
         // printf("\n\n");
     }
 }
 
-Movie ** init_movie_list(FILE * movie_file_ptr, int init_size, char separator) {
-    Movie ** m_list = malloc(sizeof(Movie*)*init_size);
+Node * init_movie_tree(FILE * movie_file_ptr, int init_size, char separator) {
+    Node * tree_head = NULL;
     
-    fuel_movie_list(&movie_file_ptr, separator, &m_list, init_size);
+    fuel_movie_tree(&movie_file_ptr, separator, &tree_head, init_size);
     
-    return m_list;
+    return tree_head;
 }
 
 #endif
