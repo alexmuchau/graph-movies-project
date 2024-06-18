@@ -4,7 +4,7 @@
 #include "tools.h"
 
 int clear_id(char * data, int size) {
-    char *id = malloc(sizeof(char)*(size-2));
+    char *id = malloc(sizeof(char)*(size - 2));
     strcpy(id, data + 2);
     
     return atoi(id);
@@ -27,29 +27,25 @@ int get_row(
     }
     
     char sep_line = '\n';
-    char c = fgetc((*fileptr));
+    char c;
     int i = 0, j = 0, index = 0;
-    int search_index = 0;
-    
     fseek((*fileptr), cur_idx, SEEK_SET);
     
     while (c != sep_line) {
         while (c == separator) {
             c = fgetc((*fileptr));
-            search_index += 1;
         }
         
         while (c != separator && c != sep_line) {
             c = fgetc((*fileptr));
             j++;
-            search_index += 1;
         }
         
         if (index == col->index) {
             char * data = malloc(sizeof(char)*j);
             fseek((*fileptr), cur_idx + i, SEEK_SET);
             fgets(data, j, (*fileptr));
-            // printf("found %s -> %s\n", col->name, data);
+            printf("found %s -> %s.\n", col->name, data);
             
             if (movie) {
                 movie_case(data, j + 1, col, movie);
@@ -72,13 +68,17 @@ int get_row(
     
     while (c != sep_line) {
         c = fgetc((*fileptr));
-        search_index += 1;
     }
     
-    c = fgetc((*fileptr));
-    search_index += 1;
+    while (c == sep_line) {
+        c = fgetc((*fileptr));
+    }
     
-    return cur_idx + search_index;
+    // c = fgetc((*fileptr));
+    // search_index += 1;
+    // printf("\n");
+    
+    return ftell((*fileptr));
 }
 
 void print_cols(Column * col) {

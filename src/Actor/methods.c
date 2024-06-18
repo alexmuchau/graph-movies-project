@@ -105,8 +105,6 @@ void fuel_actor_list(FILE ** actor_fileptr, char separator, Actor *** a_list, in
             actor_cols,
             cur_idx
         );
-        // break;
-        // printf("\n\n");
     }
 }
 

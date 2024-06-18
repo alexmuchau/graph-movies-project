@@ -122,10 +122,7 @@ void balance(Node ** n)
 		{
 			*n = rotate_right(*n, weight);
 		}
-		else
-		{
-			update_level(*n);
-		}
+		update_level(*n);
 	}
 }
 
@@ -205,11 +202,11 @@ Movie * search_movie(Node *n, int id)
 		return n->movie;
 	}
 	
-	if (id >= n->movie->id) {
+	if (id > n->movie->id) {
 		return search_movie(n->right, id);
-	} else {
-		return search_movie(n->left, id);
 	}
+	
+	return search_movie(n->left, id);
 }
 
 

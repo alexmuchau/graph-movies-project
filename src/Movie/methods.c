@@ -3,6 +3,16 @@
 
 #include "methods.h"
 
+void insert_movie_node(MovieNode * m_node, Movie * movie) {
+    if (!m_node->next) {
+        m_node->next = malloc(sizeof(MovieNode));
+        m_node->next->movie = movie;
+        m_node->next->next = NULL;
+    }
+    
+    insert_movie_node(m_node->next, movie);
+}
+
 int get_movies_cols(FILE ** fileptr, char separator, Column ** movie_col_to_search_list) {
     (*movie_col_to_search_list)->name = malloc(sizeof(char)*6);
     strcpy((*movie_col_to_search_list)->name, "tconst");
@@ -20,7 +30,7 @@ int get_movies_cols(FILE ** fileptr, char separator, Column ** movie_col_to_sear
     return cur_idx;
 }
 
-void * movie_case (char* data, int size, Column* col, Movie** movie) {
+void * movie_case(char* data, int size, Column* col, Movie** movie) {
     if (col->index == 0) {
         (*movie)->id = clear_id(data, size);
     } else {
@@ -50,7 +60,7 @@ void fuel_movie_tree(FILE ** movie_file_ptr, char separator, Node ** tree_head, 
             cur_idx
         );
         
-        insert(tree_head, movie);
+        if (movie->id != __INT32_MAX__) insert(tree_head, movie);
         // printf("\n\n");
     }
 }

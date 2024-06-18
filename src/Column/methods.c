@@ -4,23 +4,17 @@
 #include "methods.h"
 
 int get_col(FILE ** fileptr, char separator, Column ** col_to_search) {
-    int i = 0;
-    int j = 1;
-    int index = 0;
-    int search_index = 0;
+    int i = 0, j = 0, index = 0;
     char sep_line = '\n';
 
-    fseek((*fileptr), i, SEEK_SET);
-    char c = fgetc((*fileptr));
+    char c;
     while (c != sep_line) {
         while (c == separator) {
             c = fgetc((*fileptr));
-            search_index += 1;
         }
         while (c != separator && c != sep_line) {
             c = fgetc((*fileptr));
             j++;
-            search_index += 1;
         }
         char * text = malloc(sizeof(char)*(j));
         fseek((*fileptr), i, SEEK_SET);
@@ -44,13 +38,11 @@ int get_col(FILE ** fileptr, char separator, Column ** col_to_search) {
     
     while (c != sep_line) {
         c = fgetc((*fileptr));
-        search_index += 1;
     }
     
-    c = fgetc((*fileptr));
-    search_index += 1;
-    
-    return search_index;
+    // c = fgetc((*fileptr));
+    // search_index += 1;
+    return ftell(*fileptr) + 1;
 }
 
 #endif
