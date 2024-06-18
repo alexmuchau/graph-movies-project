@@ -17,7 +17,7 @@ struct MovieNode;
 typedef struct MovieNode MovieNode;
 
 struct MovieNode {
-    Movie * Movie;
+    Movie * movie;
     MovieNode *next;
 };
 

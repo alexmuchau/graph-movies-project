@@ -7,9 +7,11 @@
 
 ////// CODIGO DISPONIBILIZADO PELO PROFESSOR /////
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "../tools/libs.h"
 #include "Movie.h"
+
+#ifndef MOV_T_C_H
+#define MOV_T_C_H
 
 struct Node;
 typedef struct Node Node;
@@ -21,6 +23,8 @@ struct Node
 	Node  * left;
 	Node  * right; 
 };
+
+#endif
 
 void visit(Node * n);
 void destruct(Node * n);
@@ -42,3 +46,5 @@ void insert_node(Node ** n, Node * m);
 void insert(Node ** n, Movie* movie);
 
 void erase(Node ** n, int id);
+
+Movie * search_movie(Node *n, int id);

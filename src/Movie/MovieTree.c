@@ -197,6 +197,10 @@ void erase(Node ** n, int id)
 
 Movie * search_movie(Node *n, int id)
 {
+	if (!n) {
+		return NULL;
+	}
+	
 	if (id == n->movie->id) {
 		return n->movie;
 	}
