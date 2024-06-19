@@ -1,3 +1,12 @@
+//////////////////////////////////////////////////
+
+// Curitiba 2024
+// Universidade Positivo
+// Escola de Tecnologia da Informação
+// Alex Muchau
+
+//////////////////////////////////////////////////
+
 #include "../tools/libs.h"
 #include "../Actor/Actor.h"
 #include "../Movie/Movie.h"
