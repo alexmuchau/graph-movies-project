@@ -5,15 +5,20 @@
 // Escola de Tecnologia da Informação
 // Alex Muchau
 
-//////////////////////////////////////////////////
+///////////// CORE
 
 #ifndef MOV_M_H
 #define MOV_M_H
 
 #include "methods.h"
 
-void insert_movie_node(MovieNode * m_node, Movie * movie) {
-    if (!m_node->next) {
+
+///////////// MOVIE NODE
+
+void insert_movie_node(MovieNode * m_node, Movie * movie)
+{
+    if (!m_node->next)
+    {
         m_node->next = malloc(sizeof(MovieNode));
         m_node->next->movie = movie;
         m_node->next->next = NULL;
@@ -22,7 +27,11 @@ void insert_movie_node(MovieNode * m_node, Movie * movie) {
     insert_movie_node(m_node->next, movie);
 }
 
-int get_movies_cols(FILE ** fileptr, char separator, Column ** movie_col_to_search_list) {
+
+///////////// GET MOVIE COLS
+
+int get_movies_cols(FILE ** fileptr, char separator, Column ** movie_col_to_search_list)
+{
     (*movie_col_to_search_list)->name = malloc(sizeof(char)*6);
     strcpy((*movie_col_to_search_list)->name, "tconst");
     (*movie_col_to_search_list)->index = __INT32_MAX__;
@@ -39,19 +48,28 @@ int get_movies_cols(FILE ** fileptr, char separator, Column ** movie_col_to_sear
     return cur_idx;
 }
 
-void * movie_case(char* data, int size, Column* col, Movie** movie) {
-    if (col->index == 0) {
+
+///////////// GET MOVIE FILE INFO
+
+void * movie_case(char* data, int size, Column* col, Movie** movie)
+{
+    if (col->index == 0)
+    {
         (*movie)->id = clear_id(data, size);
-    } else {
+    }
+    else
+    {
         (*movie)->title = data;
     }
 }
 
-void fuel_movie_tree(FILE ** movie_file_ptr, char separator, Node ** tree_head, int size) {
+void fuel_movie_tree(FILE ** movie_file_ptr, char separator, Node ** tree_head, int size)
+{
     Column * movie_cols = malloc(sizeof(Column));
     int cur_idx = get_movies_cols(movie_file_ptr, separator, &movie_cols);
     
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++)
+    {
         Movie * movie = malloc(sizeof(Movie));
         movie->id = __INT32_MAX__;
         movie->title = NULL;
@@ -74,7 +92,8 @@ void fuel_movie_tree(FILE ** movie_file_ptr, char separator, Node ** tree_head, 
     }
 }
 
-Node * init_movie_tree(FILE * movie_file_ptr, int init_size, char separator) {
+Node * init_movie_tree(FILE * movie_file_ptr, int init_size, char separator)
+{
     Node * tree_head = NULL;
     
     fuel_movie_tree(&movie_file_ptr, separator, &tree_head, init_size);

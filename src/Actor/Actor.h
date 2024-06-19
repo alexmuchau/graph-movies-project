@@ -15,7 +15,8 @@ typedef struct Actor Actor;
 
 struct MovieNode;
 
-struct Actor {
+struct Actor
+{
     int id;
     char * name;
     struct MovieNode * movies;

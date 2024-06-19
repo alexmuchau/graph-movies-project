@@ -5,14 +5,45 @@
 // Escola de Tecnologia da Informação
 // Alex Muchau
 
-//////////////////////////////////////////////////
+///////////// CORE
 
 #ifndef ACT_M_H
 #define ACT_M_H
 
 #include "methods.h"
 
-void split_movies_ids(char * data, int size, char separator, Actor** actor) {
+
+///////////// GET ACTOR COLS
+
+int get_actor_cols(FILE ** fileptr, char separator, Column ** actors_cols_to_search)
+{
+    (*actors_cols_to_search)->name = malloc(sizeof(char)*6);
+    strcpy((*actors_cols_to_search)->name, "nconst");
+    (*actors_cols_to_search)->index = __INT32_MAX__;
+    
+    (*actors_cols_to_search)->next = malloc(sizeof(Column));
+    
+    Column * actor_col = (*actors_cols_to_search)->next;
+    actor_col->name = malloc(sizeof(char)*11);
+    strcpy(actor_col->name, "primaryName");
+    actor_col->index = __INT32_MAX__;
+    actor_col->next = malloc(sizeof(Column));
+    
+    actor_col = actor_col->next;
+    actor_col->name = malloc(sizeof(char)*14);
+    strcpy(actor_col->name, "knownForTitles");
+    actor_col->index = __INT32_MAX__;
+    actor_col->next = NULL;
+    
+    int cur_idx = get_col(fileptr, separator, actors_cols_to_search);
+    return cur_idx;
+}
+
+
+///////////// GET ACTOR FILE INFO
+
+void split_movies_ids(char * data, int size, char separator, Actor** actor)
+{
     int start_idx = 0, i = 0, id_size, list_size = 5;
     (*actor)->movies_ids = malloc(sizeof(int)*5);
     // printf("%s\n", data);
@@ -48,7 +79,8 @@ void split_movies_ids(char * data, int size, char separator, Actor** actor) {
     // printf("\n");
 }
 
-void * actor_case (char* data, int size, Column* col, Actor** actor) {
+void * actor_case(char* data, int size, Column* col, Actor** actor)
+{
     if (col->index == 0) {
         // printf("index -> %s\n", data);
         (*actor)->id = clear_id(data, size);
@@ -72,30 +104,8 @@ void * actor_case (char* data, int size, Column* col, Actor** actor) {
     }
 }
 
-int get_actor_cols(FILE ** fileptr, char separator, Column ** actors_cols_to_search) {
-    (*actors_cols_to_search)->name = malloc(sizeof(char)*6);
-    strcpy((*actors_cols_to_search)->name, "nconst");
-    (*actors_cols_to_search)->index = __INT32_MAX__;
-    
-    (*actors_cols_to_search)->next = malloc(sizeof(Column));
-    
-    Column * actor_col = (*actors_cols_to_search)->next;
-    actor_col->name = malloc(sizeof(char)*11);
-    strcpy(actor_col->name, "primaryName");
-    actor_col->index = __INT32_MAX__;
-    actor_col->next = malloc(sizeof(Column));
-    
-    actor_col = actor_col->next;
-    actor_col->name = malloc(sizeof(char)*14);
-    strcpy(actor_col->name, "knownForTitles");
-    actor_col->index = __INT32_MAX__;
-    actor_col->next = NULL;
-    
-    int cur_idx = get_col(fileptr, separator, actors_cols_to_search);
-    return cur_idx;
-}
-
-void fuel_actor_list(FILE ** actor_fileptr, char separator, Actor *** a_list, int size) {
+void fuel_actor_list(FILE ** actor_fileptr, char separator, Actor *** a_list, int size)
+{
     Column * actor_cols = malloc(sizeof(Column));
     int cur_idx = get_actor_cols(actor_fileptr, separator, &actor_cols);
     
@@ -121,7 +131,8 @@ void fuel_actor_list(FILE ** actor_fileptr, char separator, Actor *** a_list, in
     }
 }
 
-Actor ** init_actor_list(FILE * actor_fileptr, int init_size, char separator) {
+Actor ** init_actor_list(FILE * actor_fileptr, int init_size, char separator)
+{
     Actor ** a_list = malloc(sizeof(Actor*)*init_size);
     
     fuel_actor_list(&actor_fileptr, separator, &a_list, init_size);

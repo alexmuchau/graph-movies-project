@@ -7,17 +7,8 @@
 
 //////////////////////////////////////////////////
 
-#ifndef COL_H
-#define COL_H
+#include "libs.h"
+#include "../Adjacency/Adjacency.h"
+#include "MovieTree.h"
 
-struct Column;
-typedef struct Column Column;
-
-struct Column
-{
-    int index;
-    char * name;
-    Column * next;
-};
-
-#endif
+void draw_dot(Node *movie_tree, FILE * dot_file);

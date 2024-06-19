@@ -26,6 +26,7 @@ int get_row(
     int cur_idx
 );
 
-void draw_dot(Node *movie_tree, FILE * dot_file);
-
 void print_cols(Column * col);
+void print_actor_movies(MovieNode * m_node);
+void print_movies_ids(Actor * actor);
+void print_max_right(Node* node);

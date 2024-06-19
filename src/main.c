@@ -11,34 +11,7 @@
 #include "Movie/methods.h"
 #include "Actor/methods.h"
 #include "Adjacency/methods.h"
-
-void print_actor_movies(MovieNode * m_node) {
-    if (!m_node->next){
-        printf("%s\n", m_node->movie->title);
-        return;
-    }
-    
-    printf("%s, ", m_node->movie->title);
-    
-    print_actor_movies(m_node->next);
-    return;
-}
-
-void print_movies_ids(Actor * actor) {
-    for (int i = 0; i < actor->size_movies_ids; i++) {
-        printf("%d, ", actor->movies_ids[i]);
-    }
-}
-
-void print_max_right(Node* node) {
-    if (!node->right) {
-    //     // printf("%d - %d, %s", node->level, node->movie->id, node->movie->title);
-        printf("%d - %d, %s\n", node->level, node->movie->id, node->movie->title);
-        return;
-    }
-    
-    print_max_right(node->right);
-}
+#include "tools/dot_tool.h"
 
 int main() {
     FILE *actors_fileptr;

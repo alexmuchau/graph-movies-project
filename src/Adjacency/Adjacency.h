@@ -15,7 +15,8 @@
 struct Adjacency;
 typedef struct Adjacency Adjacency;
 
-struct Adjacency {
+struct Adjacency
+{
     struct Movie * from;
     struct Movie * to;
     Adjacency * next;

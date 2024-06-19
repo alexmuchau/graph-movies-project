@@ -5,12 +5,15 @@
 // Escola de Tecnologia da Informação
 // Alex Muchau
 
-//////////////////////////////////////////////////
+///////////// CORE
 
 #ifndef TOOLS_H
 #define TOOLS_H
 
 #include "tools.h"
+
+
+///////////// GET FILE INFO
 
 int clear_id(char * data, int size) {
     char *id = malloc(sizeof(char)*(size - 2));
@@ -90,6 +93,9 @@ int get_row(
     return ftell((*fileptr));
 }
 
+
+///////////// DEBUG
+
 void print_cols(Column * col) {
     if (col == NULL) {
         return;
@@ -99,48 +105,33 @@ void print_cols(Column * col) {
     print_cols(col->next);
 }
 
-void write_dot(char * from, char * to, FILE * dot_file) {
-    // 10 por conta das: aspas, dos --, dos espacos e dos \n
-    int length = strlen(from) + strlen(to) + 13;
-    char * text = malloc(sizeof(char)*length);
-    
-    snprintf(text, length, "\n\"%s\" -- \"%s\"\n", from, to);
-    
-    fwrite(text, 1, strlen(text)-1, dot_file);
-    free(text);
-}
-
-void draw_dot_adj(Adjacency * adj, FILE * dot_file) {
-    if (!adj) return;
-    
-    if (adj->to->is_drawn == 0) {
-        write_dot(adj->from->title, adj->to->title, dot_file);
-        adj->from->is_drawn = 1;
+void print_actor_movies(MovieNode * m_node) {
+    if (!m_node->next){
+        printf("%s\n", m_node->movie->title);
+        return;
     }
     
-    draw_dot_adj(adj->next, dot_file);
+    printf("%s, ", m_node->movie->title);
+    
+    print_actor_movies(m_node->next);
+    return;
 }
 
-void draw_dot_node(Node *movie_tree, FILE * dot_file) {
-    if (!movie_tree) return;
-    if (movie_tree->movie->neighbors) draw_dot_adj(movie_tree->movie->neighbors, dot_file);
-    
-    draw_dot_node(movie_tree->left, dot_file);
-    draw_dot_node(movie_tree->right, dot_file);
+void print_movies_ids(Actor * actor) {
+    for (int i = 0; i < actor->size_movies_ids; i++) {
+        printf("%d, ", actor->movies_ids[i]);
+    }
 }
 
-void draw_dot(Node *movie_tree, FILE * dot_file) {
-    int length = strlen("graph { concentrate=true\n");
-    char header[] = "graph { concentrate=true\n";
+void print_max_right(Node* node) {
+    if (!node->right) {
+    //     // printf("%d - %d, %s", node->level, node->movie->id, node->movie->title);
+        printf("%d - %d, %s\n", node->level, node->movie->id, node->movie->title);
+        return;
+    }
     
-    fwrite(header, 1, sizeof(header) - 1, dot_file);
-    
-    draw_dot_node(movie_tree, dot_file);
-    
-    length = strlen("}");
-    char footer[] = "}";
-    
-    fwrite(footer, 1, sizeof(footer) - 1, dot_file);
+    print_max_right(node->right);
 }
+
 
 #endif

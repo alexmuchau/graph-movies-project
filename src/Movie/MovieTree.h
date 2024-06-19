@@ -29,20 +29,6 @@ struct Node
 void visit(Node * n);
 void destruct(Node * n);
 
-//////////////////////////////////////////////////
-
-int get_weight(Node * n);
-void update_level(Node * n);
-
-Node * rotate_left(Node * n, int weight);
-Node * rotate_right(Node * n, int weight);
-
-void balance(Node ** n);
-
-//////////////////////////////////////////////////
-
-void insert_node(Node ** n, Node * m);
-
 void insert(Node ** n, Movie* movie);
 
 void erase(Node ** n, int id);

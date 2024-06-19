@@ -15,7 +15,8 @@
 struct Movie;
 typedef struct Movie Movie;
 
-struct Movie {
+struct Movie
+{
     int id;
     char * title;
     struct Adjacency * neighbors;
@@ -27,9 +28,10 @@ struct Movie {
 struct MovieNode;
 typedef struct MovieNode MovieNode;
 
-struct MovieNode {
+struct MovieNode
+{
     Movie * movie;
-    MovieNode *next;
+    MovieNode * next;
 };
 
 #endif

@@ -5,23 +5,30 @@
 // Escola de Tecnologia da Informação
 // Alex Muchau
 
-//////////////////////////////////////////////////
+///////////// CORE
 
 #ifndef COL_M_H
 #define COL_M_H
 
 #include "methods.h"
 
-int get_col(FILE ** fileptr, char separator, Column ** col_to_search) {
+
+///////////// GET COLUMN IN A ROW
+
+int get_col(FILE ** fileptr, char separator, Column ** col_to_search)
+{
     int i = 0, j = 0, index = 0;
     char sep_line = '\n';
 
     char c;
-    while (c != sep_line) {
-        while (c == separator) {
+    while (c != sep_line)
+    {
+        while (c == separator)
+        {
             c = fgetc((*fileptr));
         }
-        while (c != separator && c != sep_line) {
+        while (c != separator && c != sep_line)
+        {
             c = fgetc((*fileptr));
             j++;
         }
@@ -29,10 +36,12 @@ int get_col(FILE ** fileptr, char separator, Column ** col_to_search) {
         fseek((*fileptr), i, SEEK_SET);
         fgets(text, j, (*fileptr));
         
-        if (strcmp(text, (*col_to_search)->name) == 0) {
+        if (strcmp(text, (*col_to_search)->name) == 0)
+        {
             (*col_to_search)->index = index;
             
-            if (!(*col_to_search)->next) {
+            if (!(*col_to_search)->next)
+            {
                 break;
             }
             
@@ -45,7 +54,8 @@ int get_col(FILE ** fileptr, char separator, Column ** col_to_search) {
         index += 1;
     }
     
-    while (c != sep_line) {
+    while (c != sep_line)
+    {
         c = fgetc((*fileptr));
     }
     
