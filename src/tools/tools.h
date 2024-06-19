@@ -1,6 +1,7 @@
 #include "libs.h"
 #include "../Column/Column.h"
 #include "../Movie/Movie.h"
+#include "../Movie/MovieTree.h"
 #include "../Actor/Actor.h"
 
 int clear_id(char * data, int size);
@@ -15,5 +16,7 @@ int get_row(
     Column * col,
     int cur_idx
 );
+
+void draw_dot(Node *movie_tree, FILE * dot_file);
 
 void print_cols(Column * col);

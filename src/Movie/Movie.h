@@ -10,7 +10,9 @@ struct Movie {
     int id;
     char * title;
     struct Adjacency * neighbors;
-    int list_index;
+    
+    // Nao escrito no .dot, entao = 0, se nao 1
+    int is_drawn;
 };
 
 struct MovieNode;

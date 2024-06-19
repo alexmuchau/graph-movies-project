@@ -35,7 +35,7 @@ int main() {
     FILE *actors_fileptr;
     FILE *movies_fileptr;
     char separator = '\t';
-    int size = 100000;
+    int size = 10000;
     
     actors_fileptr = fopen("././data/name.basics.tsv", "r");
     movies_fileptr = fopen("././data/title.basics.tsv", "r");
@@ -55,35 +55,8 @@ int main() {
         
     connect_and_create_adjacencies(&actor_list, size, &movies_tree);
     
-    int i = 0;
-    while (1==1) {
-        while (i < size - 1 && !actor_list[i]->movies) {
-            // printf("%d\n", i);
-            i++;
-        }
-        if (actor_list[i]->movies) {
-            if (actor_list[i]->movies->movie->neighbors) {
-                printf("%d, Actor -> %s\n", i, actor_list[i]->name);
-                printf("Actor Movies -> ");
-                print_actor_movies(actor_list[i]->movies);
-                // print_movies_ids(actor_list[i]);
-                printf("\n");
-                printf(
-                    "%d, %s -> %s -> %s\n",
-                    i,
-                    actor_list[i]->name,
-                    actor_list[i]->movies->movie->neighbors->from->title,
-                    actor_list[i]->movies->movie->neighbors->to->title
-                );
-                
-                break;
-            }
-            i++;
-        }
-        else {
-            break;
-        }
-    }
+    FILE * dot_file = fopen("././input.dot", "w");
+    draw_dot(movies_tree, dot_file);
     
     return 0;
 }

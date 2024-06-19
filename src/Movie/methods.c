@@ -47,7 +47,7 @@ void fuel_movie_tree(FILE ** movie_file_ptr, char separator, Node ** tree_head, 
         movie->id = __INT32_MAX__;
         movie->title = NULL;
         movie->neighbors = NULL;
-        movie->list_index = i;
+        movie->is_drawn = 0;
         
         cur_idx = get_row(
             NULL, // Actor
