@@ -62,24 +62,24 @@ MovieNode * connect_movie_id(Node * movie_tree, int * movie_ids, int size)
     return NULL;
 }
 
-void connect_and_create_adjacencies(Actor *** a_list, int size, Node ** movie_tree)
+void connect_and_create_adjacencies(ActorList ** a_list, Node ** movie_tree)
 {
     int m_idx, i;
     MovieNode ** movie_node;
-    for (i =0; i < size; i++)
+    for (i = 0; i < (*a_list)->size; i++)
     {
         // In cases that knownForTitles == \N
-        if (!(*a_list)[i]->movies_ids) continue;
+        if (!(*a_list)->a_list[i]->movies_ids) continue;
         
         // Connecting movies_ids with movie_tree
-        (*a_list)[i]->movies = connect_movie_id(
+        (*a_list)->a_list[i]->movies = connect_movie_id(
             (*movie_tree),
-            (*a_list)[i]->movies_ids,
-            (*a_list)[i]->size_movies_ids
+            (*a_list)->a_list[i]->movies_ids,
+            (*a_list)->a_list[i]->size_movies_ids
         );
         
         // Adding adjacencies
-        movie_node = &(*a_list)[i]->movies;
+        movie_node = &(*a_list)->a_list[i]->movies;
         MovieNode ** next_node;
         while ((*movie_node) && (*movie_node)->movie)
         {
@@ -96,6 +96,8 @@ void connect_and_create_adjacencies(Actor *** a_list, int size, Node ** movie_tr
             movie_node = &(*movie_node)->next;
         }
     }
+    
+    printf("\n-----> CONNECTED AND CREATED ADJACENCIES\n");
 }
 
 #endif

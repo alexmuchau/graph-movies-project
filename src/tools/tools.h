@@ -26,6 +26,7 @@ int get_row(
     int cur_idx
 );
 
+void print_row_index(int index, char * title);
 void print_cols(Column * col);
 void print_actor_movies(MovieNode * m_node);
 void print_movies_ids(Actor * actor);

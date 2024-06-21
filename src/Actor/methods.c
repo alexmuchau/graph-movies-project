@@ -104,22 +104,29 @@ void * actor_case(char* data, int size, Column* col, Actor** actor)
     }
 }
 
-void fuel_actor_list(FILE ** actor_fileptr, char separator, Actor *** a_list, int size)
+void fuel_actor_list(FILE ** actor_fileptr, char separator, ActorList ** a_list, int size, int list_size)
 {
     Column * actor_cols = malloc(sizeof(Column));
     int cur_idx = get_actor_cols(actor_fileptr, separator, &actor_cols);
     
-    for (int i = 0; i < size; i++) {
-        (*a_list)[i] = malloc(sizeof(Actor));
-        (*a_list)[i]->id = __INT32_MAX__;
-        (*a_list)[i]->name = NULL;
-        (*a_list)[i]->movies = NULL;
-        (*a_list)[i]->movies_ids = NULL;
-        (*a_list)[i]->size_movies_ids = 0;
-        
+    int i = 0;
+    
+    while (i < size) {        
+        if (i > list_size)
+        {
+            list_size += 3000000;
+            (*a_list)->a_list = realloc((*a_list)->a_list, sizeof(Actor) * list_size);
+            (*a_list)->size = list_size;
+        }
+        (*a_list)->a_list[i] = malloc(sizeof(Actor));
+        (*a_list)->a_list[i]->id = __INT32_MAX__;
+        (*a_list)->a_list[i]->name = NULL;
+        (*a_list)->a_list[i]->movies = NULL;
+        (*a_list)->a_list[i]->movies_ids = NULL;
+        (*a_list)->a_list[i]->size_movies_ids = 0;
         
         cur_idx = get_row(
-            &((*a_list)[i]), // Actor
+            &((*a_list)->a_list[i]), // Actor
             NULL, // Movie
             NULL, // Movie function,
             &actor_case, // Actor function
@@ -128,16 +135,49 @@ void fuel_actor_list(FILE ** actor_fileptr, char separator, Actor *** a_list, in
             actor_cols,
             cur_idx
         );
+        
+        
+        if (cur_idx == -1)
+        {
+            free((*a_list)->a_list[i]);
+            break;
+        }
+        
+        print_row_index(i, "Actors");
+
+        i++;
     }
+    
+    if (i != list_size) {
+        (*a_list)->a_list = realloc((*a_list)->a_list, sizeof(Actor)*i);
+        (*a_list)->size = i;
+        printf("Reallocating actor list -> list_size:%d -> i:%d\n", list_size, (*a_list)->size);
+    }
+    
+    printf("----------> Read %d, FINISHED ACTOR ROWS\n\n", (*a_list)->size);
 }
 
-Actor ** init_actor_list(FILE * actor_fileptr, int init_size, char separator)
+ActorList * init_actor_list(FILE * actor_fileptr, int init_size, char separator)
 {
-    Actor ** a_list = malloc(sizeof(Actor*)*init_size);
+    int list_size;
+
+    if (init_size == -1)
+    {
+        init_size = __INT32_MAX__;
+        list_size = 3000000;
+    }
+    else
+    {
+        list_size = init_size;
+    }
     
-    fuel_actor_list(&actor_fileptr, separator, &a_list, init_size);
+    ActorList * actor_list = malloc(sizeof(ActorList));
+    actor_list->a_list = malloc(sizeof(Actor*)*list_size);
+    actor_list->size = list_size;
     
-    return a_list;
+    fuel_actor_list(&actor_fileptr, separator, &actor_list, init_size, list_size);
+    
+    return actor_list;
 }
 
 #endif

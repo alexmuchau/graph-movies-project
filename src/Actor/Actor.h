@@ -24,4 +24,13 @@ struct Actor
     int size_movies_ids;
 };
 
+struct ActorList;
+typedef struct ActorList ActorList;
+
+struct ActorList
+{
+    Actor ** a_list;
+    int size;
+};
+
 #endif

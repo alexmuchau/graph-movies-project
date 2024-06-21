@@ -12,4 +12,4 @@
 #include "../Movie/Movie.h"
 #include "../Movie/MovieTree.h"
 
-void connect_and_create_adjacencies(Actor *** a_list, int size, Node ** movie_tree);
+void connect_and_create_adjacencies(ActorList ** a_list, Node ** movie_tree);

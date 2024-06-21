@@ -9,6 +9,6 @@
 
 #include "libs.h"
 #include "../Adjacency/Adjacency.h"
-#include "MovieTree.h"
+#include "../Movie/MovieTree.h"
 
 void draw_dot(Node *movie_tree, FILE * dot_file);

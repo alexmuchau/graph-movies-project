@@ -16,10 +16,7 @@
 ///////////// GET FILE INFO
 
 int clear_id(char * data, int size) {
-    char *id = malloc(sizeof(char)*(size - 2));
-    strcpy(id, data + 2);
-    
-    return atoi(id);
+    return atoi(data + 2);
 }
 
 int get_row(
@@ -33,6 +30,10 @@ int get_row(
     int cur_idx
 )
 {
+    if (feof((*fileptr))) {
+        return -1;
+    }
+    
     if (actor && movie) {
         printf("Must get_row only for actor, or only for movie\n");
         return -1;
@@ -43,12 +44,12 @@ int get_row(
     int i = 0, j = 0, index = 0;
     fseek((*fileptr), cur_idx, SEEK_SET);
     
-    while (c != sep_line) {
+    while (c != sep_line && c != EOF) {
         while (c == separator) {
             c = fgetc((*fileptr));
         }
         
-        while (c != separator && c != sep_line) {
+        while (c != separator && c != sep_line && c != EOF) {
             c = fgetc((*fileptr));
             j++;
         }
@@ -90,11 +91,41 @@ int get_row(
     // search_index += 1;
     // printf("\n");
     
+    
     return ftell((*fileptr));
 }
 
 
 ///////////// DEBUG
+
+void print_row_index(int index, char * title)
+{
+    if (index == 1000000)
+    {
+        printf("%s -> Passed first million rows", title);
+        printf("\n------\n");
+    } 
+    else if (index == 3000000)
+    {
+        printf("%s -> Passed 3 million rows", title);
+        printf("\n------\n");
+    }
+    else if (index == 5000000)
+    {
+        printf("%s -> Passed 5 million rows", title);
+        printf("\n------\n");
+    }
+    else if (index == 10000000)
+    {
+        printf("%s -> Passed 10 million rows", title);
+        printf("\n------\n");
+    }
+    else if (index == 12000000)
+    {
+        printf("%s -> Passed 12 million rows", title);
+        printf("\n------\n");
+    }    
+}
 
 void print_cols(Column * col) {
     if (col == NULL) {
