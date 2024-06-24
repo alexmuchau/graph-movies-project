@@ -1,7 +1,7 @@
 # Graph Movies Project
 Instructions...
-- Create a repository data/
-- Insert the .tsv files there ([link to download](https://datasets.imdbws.com/))
-- all ok
+- Create a repository data/ and insert the .tsv files ([link to download](https://datasets.imdbws.com/))
+- Compile files with ./compile.sh
+- Runs ./graph_movies.o
 
 *Alex Muchau*
