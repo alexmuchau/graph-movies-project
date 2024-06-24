@@ -17,7 +17,8 @@ int main() {
     FILE *actors_fileptr;
     FILE *movies_fileptr;
     char separator = '\t';
-    int size = 10000;
+    int movie_size = -1;
+    int actor_size = 200;
     
     actors_fileptr = fopen("././data/name.basics.tsv", "r");
     movies_fileptr = fopen("././data/title.basics.tsv", "r");
@@ -32,13 +33,14 @@ int main() {
         return -1;
     }
     
-    Node * movies_tree = init_movie_tree(movies_fileptr, size, separator);
-    ActorList * actor_list = init_actor_list(actors_fileptr, size, separator, movies_tree);
+    Node * movies_tree = init_movie_tree(movies_fileptr, movie_size, separator);
+    ActorList * actor_list = init_actor_list(actors_fileptr, actor_size, separator, movies_tree);
         
     connect_and_create_adjacencies(&actor_list, &movies_tree);
     
     FILE * dot_file = fopen("././input.dot", "w");
     draw_dot(movies_tree, dot_file);
+    
     fclose(actors_fileptr);
     fclose(movies_fileptr);
     fclose(dot_file);

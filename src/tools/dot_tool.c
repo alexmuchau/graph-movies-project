@@ -18,7 +18,7 @@ void _write_dot(char * from, char * to, FILE * dot_file) {
     char * text = malloc(sizeof(char)*length);
     
     snprintf(text, length, "\n\"%s\" -- \"%s\"\n", from, to);
-    
+    printf("Writing edge -> %s\n", text);
     fwrite(text, 1, strlen(text)-1, dot_file);
     free(text);
 }
