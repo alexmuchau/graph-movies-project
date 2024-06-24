@@ -45,7 +45,7 @@ int get_actor_cols(FILE ** fileptr, char separator, Column ** actors_cols_to_sea
 void split_movies_ids(char * data, int size, char separator, Actor** actor, Node * movie_tree)
 {
     // In cases that knownForTitles == \N
-    if (strcmp(data, "\N") == 0) return;
+    if (strlen(data) < 3) return;
     
     int start_idx = 0, i = 0, id_size, list_size = 5, size_movies_ids = 0;
     int * movies_ids = malloc(sizeof(int)*5);
