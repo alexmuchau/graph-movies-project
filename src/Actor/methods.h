@@ -11,6 +11,7 @@
 #include "../tools/tools.h"
 #include "../Column/Column.h"
 #include "../Column/methods.h"
+#include "../Adjacency/methods.h"
 #include "Actor.h"
 
-ActorList * init_actor_list(FILE * actor_fileptr, int init_size, char separator);
+ActorList * init_actor_list(FILE * actor_fileptr, int init_size, char separator, Node * movie_tree);

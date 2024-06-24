@@ -85,7 +85,8 @@ void fuel_movie_tree(FILE ** movie_file_ptr, char separator, Node ** tree_head, 
             movie_file_ptr,
             separator,
             movie_cols,
-            cur_idx
+            cur_idx,
+            (*tree_head)
         );
         
         if (cur_idx == -1)
@@ -106,6 +107,7 @@ void fuel_movie_tree(FILE ** movie_file_ptr, char separator, Node ** tree_head, 
 
 Node * init_movie_tree(FILE * movie_file_ptr, int init_size, char separator)
 {
+    printf("----------> INIT MOVIE TREE\n");
     Node * tree_head = NULL;
     
     if (init_size < 0) init_size = __INT32_MAX__;

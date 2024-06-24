@@ -21,7 +21,6 @@ struct Actor
     char * name;
     struct MovieNode * movies;
     int * movies_ids;
-    int size_movies_ids;
 };
 
 struct ActorList;

@@ -42,44 +42,45 @@ int get_actor_cols(FILE ** fileptr, char separator, Column ** actors_cols_to_sea
 
 ///////////// GET ACTOR FILE INFO
 
-void split_movies_ids(char * data, int size, char separator, Actor** actor)
+void split_movies_ids(char * data, int size, char separator, Actor** actor, Node * movie_tree)
 {
-    int start_idx = 0, i = 0, id_size, list_size = 5;
-    (*actor)->movies_ids = malloc(sizeof(int)*5);
-    // printf("%s\n", data);
+    // In cases that knownForTitles == \N
+    if (strcmp(data, "\N") == 0) return;
+    
+    int start_idx = 0, i = 0, id_size, list_size = 5, size_movies_ids = 0;
+    int * movies_ids = malloc(sizeof(int)*5);
     while (i < size) {
         while (data[i] != separator && i < size) {
             i++;
         }
         id_size = (i - start_idx);
         
-        if ((*actor)->size_movies_ids > list_size) {
+        if (size_movies_ids > list_size) {
             list_size += 5;
-            (*actor)->movies_ids = realloc((*actor)->movies_ids, sizeof(int)*list_size);
+            movies_ids = realloc(movies_ids, sizeof(int)*list_size);
         }
         
         char * id = malloc(sizeof(char)*id_size);
         strncpy(id, data + start_idx, id_size);
-        (*actor)->movies_ids[(*actor)->size_movies_ids] = clear_id(id, id_size);
-        // printf("%s -> %d,", id, result[qty]);
         
-        (*actor)->size_movies_ids += 1;
+        movies_ids[size_movies_ids] = clear_id(id, id_size);
+        
+        size_movies_ids += 1;
         i += 1;
         start_idx = i;
+        
+        free(id);
     }
     
-    if ((*actor)->size_movies_ids != list_size) {
-        (*actor)->movies_ids = realloc((*actor)->movies_ids, sizeof(int)*(*actor)->size_movies_ids);
+    if (size_movies_ids != list_size) {
+        movies_ids = realloc(movies_ids, sizeof(int)*size_movies_ids);
     }
     
-    // for (int i = 0; i < (*actor)->size_movies_ids; i++) {
-    //     printf("%d, ", (*actor)->movies_ids[i]);
-    // }
-    
-    // printf("\n");
+    (*actor)->movies = connect_movie_id(movies_ids, size_movies_ids, movie_tree);
+    free(movies_ids);
 }
 
-void * actor_case(char* data, int size, Column* col, Actor** actor)
+void * actor_case(char* data, int size, Column* col, Actor** actor, Node * movie_tree)
 {
     if (col->index == 0) {
         // printf("index -> %s\n", data);
@@ -92,7 +93,7 @@ void * actor_case(char* data, int size, Column* col, Actor** actor)
         if (strlen(data) < 5) {
             (*actor)->movies_ids = NULL;
         } else {
-            split_movies_ids(data, size, ',', actor);
+            split_movies_ids(data, size, ',', actor, movie_tree);
         }
         // for (int j = 0; j < (*actor)->size_movies_ids; j++) {
         //     printf("%d, ", (*actor)->movies_ids[j]);
@@ -104,7 +105,7 @@ void * actor_case(char* data, int size, Column* col, Actor** actor)
     }
 }
 
-void fuel_actor_list(FILE ** actor_fileptr, char separator, ActorList ** a_list, int size, int list_size)
+void fuel_actor_list(FILE ** actor_fileptr, char separator, ActorList ** a_list, int size, int list_size, Node * movie_tree)
 {
     Column * actor_cols = malloc(sizeof(Column));
     int cur_idx = get_actor_cols(actor_fileptr, separator, &actor_cols);
@@ -122,8 +123,6 @@ void fuel_actor_list(FILE ** actor_fileptr, char separator, ActorList ** a_list,
         (*a_list)->a_list[i]->id = __INT32_MAX__;
         (*a_list)->a_list[i]->name = NULL;
         (*a_list)->a_list[i]->movies = NULL;
-        (*a_list)->a_list[i]->movies_ids = NULL;
-        (*a_list)->a_list[i]->size_movies_ids = 0;
         
         cur_idx = get_row(
             &((*a_list)->a_list[i]), // Actor
@@ -133,7 +132,8 @@ void fuel_actor_list(FILE ** actor_fileptr, char separator, ActorList ** a_list,
             actor_fileptr,
             separator,
             actor_cols,
-            cur_idx
+            cur_idx,
+            movie_tree
         );
         
         
@@ -157,8 +157,9 @@ void fuel_actor_list(FILE ** actor_fileptr, char separator, ActorList ** a_list,
     printf("----------> Read %d, FINISHED ACTOR ROWS\n\n", (*a_list)->size);
 }
 
-ActorList * init_actor_list(FILE * actor_fileptr, int init_size, char separator)
+ActorList * init_actor_list(FILE * actor_fileptr, int init_size, char separator, Node * movie_tree)
 {
+    printf("----------> INIT ACTOR LIST\n");
     int list_size;
 
     if (init_size == -1)
@@ -175,7 +176,7 @@ ActorList * init_actor_list(FILE * actor_fileptr, int init_size, char separator)
     actor_list->a_list = malloc(sizeof(Actor*)*list_size);
     actor_list->size = list_size;
     
-    fuel_actor_list(&actor_fileptr, separator, &actor_list, init_size, list_size);
+    fuel_actor_list(&actor_fileptr, separator, &actor_list, init_size, list_size, movie_tree);
     
     return actor_list;
 }

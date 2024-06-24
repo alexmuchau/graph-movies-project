@@ -34,58 +34,86 @@ Adjacency* adj_insert(Adjacency** adj, Movie * from, Movie * to)
 
 ///////////// CREATE ADJACENCIES
 
-MovieNode * connect_movie_id(Node * movie_tree, int * movie_ids, int size)
+MovieNode * _connect_movie_id(MovieNode * node, int * movie_ids, int size, int m_idx, Node * movie_tree) {
+    while (m_idx < size)
+    {
+        movie = search_movie(movie_tree, movie_ids[m_idx]);
+        if (movie)
+        {
+            // printf("%d -> %s\n", movie->id, movie->title);
+            (*m_node) = malloc(sizeof(MovieNode));
+            (*m_node)->movie = movie;
+            (*m_node)->next = NULL;
+            
+            m_node = &(*m_node)->next;
+        }
+        m_idx += 1;
+    }
+}
+
+MovieNode * connect_movie_id(int * movie_ids, int size, Node * movie_tree)
 {
     if (!movie_ids) return NULL;
     
-    MovieNode * m_node;
-    for (int m_idx = 0; m_idx < size; m_idx++)
+    // printf("Connecting movies_ids\n");
+    
+    int m_idx = -1;
+    MovieNode * head_node = NULL;
+    Movie * movie = NULL;
+    while (!movie && m_idx < size)
     {
-        Movie * movie = search_movie(movie_tree, movie_ids[m_idx]);
-        
-        if (movie)
-        {
-            m_node = malloc(sizeof(MovieNode));
-            m_node->movie = movie;
-            if (m_idx + 1 < size)
-            {
-                m_node->next = connect_movie_id(movie_tree, movie_ids + m_idx + 1, size - (m_idx + 1));
-            }
-            else
-            {
-                m_node->next = NULL;
-            }
-            return m_node;
-        }
+        m_idx += 1;
+        movie = search_movie(movie_tree, movie_ids[m_idx]);
     }
     
-    return NULL;
+    // Any movie found!
+    if (m_idx >= size)
+    {
+        return NULL; 
+    }
+    
+    head_node = malloc(sizeof(MovieNode));
+    head_node->movie = movie;
+    head_node->next = NULL;
+    
+    MovieNode ** m_node = &head_node->next;
+    while (m_idx < size)
+    {
+        movie = search_movie(movie_tree, movie_ids[m_idx]);
+        if (movie)
+        {
+            // printf("%d -> %s\n", movie->id, movie->title);
+            (*m_node) = malloc(sizeof(MovieNode));
+            (*m_node)->movie = movie;
+            (*m_node)->next = NULL;
+            
+            m_node = &(*m_node)->next;
+        }
+        m_idx += 1;
+    }
+    
+    return head_node;
 }
 
 void connect_and_create_adjacencies(ActorList ** a_list, Node ** movie_tree)
 {
+    printf("----------> CREATING ADJACENCIES\n");
     int m_idx, i;
     MovieNode ** movie_node;
+    MovieNode ** next_node;
     for (i = 0; i < (*a_list)->size; i++)
-    {
-        // In cases that knownForTitles == \N
-        if (!(*a_list)->a_list[i]->movies_ids) continue;
-        
-        // Connecting movies_ids with movie_tree
-        (*a_list)->a_list[i]->movies = connect_movie_id(
-            (*movie_tree),
-            (*a_list)->a_list[i]->movies_ids,
-            (*a_list)->a_list[i]->size_movies_ids
-        );
+    {   
+        if (!(*a_list)->a_list[i]->movies) continue;
+        movie_node = &(*a_list)->a_list[i]->movies;
         
         // Adding adjacencies
-        movie_node = &(*a_list)->a_list[i]->movies;
-        MovieNode ** next_node;
-        while ((*movie_node) && (*movie_node)->movie)
+        while ((*movie_node))
         {
+            printf("Movie node -> %s\n", (*movie_node)->movie->title);
             next_node = &(*movie_node)->next;
-            while((*next_node) && (*next_node)->movie)
+            while((*next_node))
             {
+                printf("Next node -> %s\n", (*next_node)->movie->title);
                 (*movie_node)->movie->neighbors = adj_insert(&(*movie_node)->movie->neighbors, (*movie_node)->movie, (*next_node)->movie);
                 
                 // Para grafos dirigidos, comentar essa linha
@@ -95,6 +123,8 @@ void connect_and_create_adjacencies(ActorList ** a_list, Node ** movie_tree)
             }
             movie_node = &(*movie_node)->next;
         }
+        
+        print_row_index(i, "ADJACENCIES | ACTORS");
     }
     
     printf("\n-----> CONNECTED AND CREATED ADJACENCIES\n");

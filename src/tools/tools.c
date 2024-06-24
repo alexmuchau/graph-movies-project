@@ -23,11 +23,12 @@ int get_row(
     Actor ** actor,
     Movie ** movie,
     void * (*movie_case)(char* data, int size, Column* col, Movie** movie),
-    void * (*actor_case)(char* data, int size, Column* col, Actor** actor),
+    void * (*actor_case)(char* data, int size, Column* col, Actor** actor, Node * movie_tree),
     FILE ** fileptr,
     char separator,
     Column * col,
-    int cur_idx
+    int cur_idx,
+    Node * movie_tree
 )
 {
     if (feof((*fileptr))) {
@@ -63,7 +64,7 @@ int get_row(
             if (movie) {
                 movie_case(data, j + 1, col, movie);
             } else {
-                actor_case(data, j + 1, col, actor);
+                actor_case(data, j + 1, col, actor, movie_tree);
             }
             
             if (!col->next) {
@@ -146,12 +147,6 @@ void print_actor_movies(MovieNode * m_node) {
     
     print_actor_movies(m_node->next);
     return;
-}
-
-void print_movies_ids(Actor * actor) {
-    for (int i = 0; i < actor->size_movies_ids; i++) {
-        printf("%d, ", actor->movies_ids[i]);
-    }
 }
 
 void print_max_right(Node* node) {
