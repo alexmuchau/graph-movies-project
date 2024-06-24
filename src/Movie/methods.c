@@ -51,6 +51,31 @@ int get_movies_cols(FILE ** fileptr, char separator, Column ** movie_col_to_sear
 
 ///////////// GET MOVIE FILE INFO
 
+char * clear_title(char * data)
+{
+    int size = strlen(data);
+    char * new_title = malloc(sizeof(char)*size);
+    int new_size = 0;
+    
+    for (int i = 0; i < size; i++)
+    {
+        if (data[i] == '"' || data[i] == '\'')
+        {
+            continue;
+        }
+        
+        new_title[new_size] = data[i];
+        new_size += 1;
+    }
+    
+    if (new_size < size)
+    {
+        new_title = realloc(new_title, sizeof(char)*new_size);
+    }
+    
+    return new_title;
+}
+
 void * movie_case(char* data, int size, Column* col, Movie** movie)
 {
     if (col->index == 0)
@@ -59,7 +84,7 @@ void * movie_case(char* data, int size, Column* col, Movie** movie)
     }
     else
     {
-        (*movie)->title = data;
+        (*movie)->title = clear_title(data);
     }
 }
 

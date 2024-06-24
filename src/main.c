@@ -18,7 +18,7 @@ int main() {
     FILE *movies_fileptr;
     char separator = '\t';
     int movie_size = -1;
-    int actor_size = 200;
+    int actor_size = 1200;
     
     actors_fileptr = fopen("././data/name.basics.tsv", "r");
     movies_fileptr = fopen("././data/title.basics.tsv", "r");

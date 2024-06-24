@@ -4,4 +4,7 @@ Instructions...
 - Compile files with ./compile.sh
 - Runs ./graph_movies.o
 
+### Optional
+dot -Tsvg input.dot > output.svg
+
 *Alex Muchau*
